@@ -14,24 +14,10 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        KvPrefModel.initKvPref(this.application, object : Serializer {
-            private val gson = Gson()
-            override fun serializeToJson(value: Any?): String? {
-                return gson.toJson(value)
-            }
-
-            override fun deserializeFromJson(json: String?, type: Type): Any? {
-                return gson.fromJson(json, type);
-            }
-        })
-
-        findViewById<Button>(R.id.read).setOnClickListener {
-            Log.i("XIAN", "read = " + SpTest.age)
-        }
 
         findViewById<Button>(R.id.write).setOnClickListener {
-            SpTest.people = null
-            Log.i("XIAN", "read = " + SpTest.people)
+            SpFileDemo.name = "大妈蛋"
+            Log.i("XIAN", "read = " + SpFileDemo.name)
         }
     }
 }
