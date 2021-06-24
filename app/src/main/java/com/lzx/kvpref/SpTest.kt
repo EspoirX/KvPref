@@ -10,7 +10,7 @@ object SpFileDemo : KvPrefModel("spFileName") {
     var age: Int by intPref()
     var height: Long by longPref()
     var weight: Float by floatPref()
-    var isGay: Boolean by booleanPref(false, key = "是否是变态")
+    var isGay: Boolean? by booleanPrefNullable(false, key = "是否是变态")
 }
 
 /**

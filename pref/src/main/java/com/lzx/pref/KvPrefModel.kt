@@ -63,12 +63,26 @@ open class KvPrefModel constructor(
         synchronous: Boolean = isCommitProperties
     ) = IntPref(default, synchronous, key, keyUpperCase)
 
+    fun intPrefNullable(
+        default: Int = 0,
+        key: String? = null,
+        keyUpperCase: Boolean = isKeyUpperCase,
+        synchronous: Boolean = isCommitProperties
+    ) = IntNullablePref(default, synchronous, key, keyUpperCase)
+
     fun longPref(
         default: Long = 0,
         key: String? = null,
         keyUpperCase: Boolean = isKeyUpperCase,
         synchronous: Boolean = isCommitProperties
     ) = LongPref(default, synchronous, key, keyUpperCase)
+
+    fun longPrefNullable(
+        default: Long = 0,
+        key: String? = null,
+        keyUpperCase: Boolean = isKeyUpperCase,
+        synchronous: Boolean = isCommitProperties
+    ) = LongNullablePref(default, synchronous, key, keyUpperCase)
 
     fun floatPref(
         default: Float = 0f,
@@ -77,12 +91,26 @@ open class KvPrefModel constructor(
         synchronous: Boolean = isCommitProperties
     ) = FloatPref(default, synchronous, key, keyUpperCase)
 
+    fun floatPrefNullable(
+        default: Float = 0f,
+        key: String? = null,
+        keyUpperCase: Boolean = isKeyUpperCase,
+        synchronous: Boolean = isCommitProperties
+    ) = FloatNullablePref(default, synchronous, key, keyUpperCase)
+
     fun booleanPref(
         default: Boolean = false,
         key: String? = null,
         keyUpperCase: Boolean = isKeyUpperCase,
         synchronous: Boolean = isCommitProperties
     ) = BooleanPref(default, synchronous, key, keyUpperCase)
+
+    fun booleanPrefNullable(
+        default: Boolean = false,
+        key: String? = null,
+        keyUpperCase: Boolean = isKeyUpperCase,
+        synchronous: Boolean = isCommitProperties
+    ) = BooleanNullablePref(default, synchronous, key, keyUpperCase)
 
     inline fun <reified T : Any> objPref(
         default: T? = null,
@@ -154,11 +182,18 @@ open class KvPrefModel constructor(
     }
 
     /**
+     * 获取key变量名
+     */
+    fun getPrefName(property: KProperty<*>): String? {
+        return kvProperties[property.name]?.propertyName
+    }
+
+    /**
      * remove
      */
     @SuppressLint("CommitPrefEdits")
-    fun remove(property: KProperty<*>) {
-        preference.edit().remove(getPrefKey(property)).execute(isCommitProperties)
+    fun remove(property: KProperty<*>, synchronous: Boolean = isCommitProperties) {
+        preference.edit().remove(getPrefKey(property)).execute(synchronous)
     }
 
     /**

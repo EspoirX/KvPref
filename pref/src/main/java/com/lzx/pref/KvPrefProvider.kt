@@ -18,3 +18,4 @@ class DefKvPref : KvPrefProvider {
         return context.getSharedPreferences(name, mode)
     }
 }
+
