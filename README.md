@@ -188,7 +188,15 @@ class KvMigrateProvider : ContentProvider() {
 
 为了尽早执行迁移逻辑，这里使用了 ContentProvider，然后顺便把初始化也放里面，通过 migrate 方法完成数据迁移。
 
-### 9. 其他 API
+### 9. LiveData 形式监听 SharedPreferences.OnSharedPreferenceChangeListener
+如果你想监听某个字段的 OnSharedPreferenceChangeListener，可以这样做：
+```kotlin
+SpFileDemo.asLiveData(SpFileDemo::name).observe(this, Observer {
+    //...
+})
+```
+
+### 10. 其他 API
 ```kotlin
 fun remove(property: KProperty<*>, synchronous: Boolean = isCommitProperties)
 fun getPrefKey(property: KProperty<*>): String?
