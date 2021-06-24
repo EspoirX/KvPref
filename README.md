@@ -12,7 +12,7 @@ allprojects {
 }
 
 dependencies {
-     implementation 'com.github.EspoirX:KvPref:v1.0'
+     implementation 'com.github.EspoirX:KvPref:v1.1'
 }
 ```
 [![](https://jitpack.io/v/EspoirX/KvPref.svg)](https://jitpack.io/#EspoirX/KvPref)
@@ -45,7 +45,7 @@ interface KvPrefProvider {
     fun get(context: Context, name: String, mode: Int): SharedPreferences
 }
 ```
-key-value 的实现有很多种，比如原生的 SharedPreferences 和 mmkv 等，所以这里需求实现一个 KvPrefProvider 接口，告诉框架你的方式是什么。
+key-value 的实现有很多种，比如原生的 SharedPreferences 和 mmkv 等，所以这里需要实现一个 KvPrefProvider 接口，告诉框架你的方式是什么。
 
 比如我用 SharedPreferences：
 ```kotlin
