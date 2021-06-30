@@ -16,7 +16,7 @@ public class MainActivityJava extends AppCompatActivity {
         findViewById(R.id.write).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.i("MainActivity", "read = " + SpFileDemoJava.INSTANCE.getPeople());
+                Log.i("MainActivity", "read = " + SpFileDemoJava.getName());
             }
         });
     }

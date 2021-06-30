@@ -5,6 +5,8 @@ import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.SystemClock
+import com.lzx.pref.property.KvPrefNullableProperty
+import com.lzx.pref.property.KvPrefProperty
 import java.lang.reflect.Type
 import kotlin.reflect.KProperty
 
@@ -177,23 +179,29 @@ open class KvPrefModel constructor(
     /**
      * 获取 key 值
      */
-    fun getPrefKey(property: KProperty<*>): String? {
-        return kvProperties[property.name]?.preferenceKey()
+    fun getPrefKey(property: KProperty<*>, applyKey: String? = null): String? {
+        val key = if (applyKey.isNullOrEmpty()) property.name else property.name + "_" + applyKey
+        return kvProperties[key]?.preferenceKey()
     }
 
     /**
      * 获取key变量名
      */
-    fun getPrefName(property: KProperty<*>): String? {
-        return kvProperties[property.name]?.propertyName
+    fun getPrefName(property: KProperty<*>, applyKey: String? = null): String? {
+        val key = if (applyKey.isNullOrEmpty()) property.name else property.name + "_" + applyKey
+        return kvProperties[key]?.propertyName
     }
 
     /**
      * remove
      */
     @SuppressLint("CommitPrefEdits")
-    fun remove(property: KProperty<*>, synchronous: Boolean = isCommitProperties) {
-        preference.edit().remove(getPrefKey(property)).execute(synchronous)
+    fun remove(
+        property: KProperty<*>,
+        applyKey: String? = null,
+        synchronous: Boolean = isCommitProperties
+    ) {
+        preference.edit().remove(getPrefKey(property, applyKey)).execute(synchronous)
     }
 
     /**

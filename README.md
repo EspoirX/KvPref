@@ -161,6 +161,7 @@ SpFileDemo.applyBulk {
     isGay = true
 }
 ```
+applyBulk 是调用 apply() 的，当然你也可以用 commitBulk
 
 ### 8. 数据迁移
 KvPref 提供了数据迁移方法，支持其他实现 SharedPreferences 接口的 key-value 实现把数据迁移到 KvPref。

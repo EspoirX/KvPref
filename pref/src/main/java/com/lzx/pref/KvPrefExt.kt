@@ -2,6 +2,7 @@ package com.lzx.pref
 
 import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
+import com.lzx.pref.property.KvPrefPropertyWithKey
 import java.lang.reflect.Type
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty0
@@ -51,17 +52,35 @@ fun SharedPreferences.Editor.execute(synchronous: Boolean) {
 @Suppress("UNCHECKED_CAST")
 internal fun <T : Any> SharedPreferences.getPreference(
     clazz: KClass<T>, type: Type, key: String?, default: T?
-): T? = when (clazz) {
-    Int::class -> getInt(key, default as Int) as T?
-    Float::class -> getFloat(key, default as Float) as T?
-    Long::class -> getLong(key, default as Long) as T?
-    Boolean::class -> getBoolean(key, default as Boolean) as T?
-    String::class -> getString(key, default as String?) as T?
-    else -> {
-        runCatching {
-            val json = getString(key, null)
-            json?.deserialize(type) ?: default
-        }.getOrElse { default }
+): T? {
+    val isDefNull = default == null
+    return when (clazz) {
+        Int::class -> {
+            val def = if (isDefNull) 0 else default as Int
+            getInt(key, def) as T?
+        }
+        Float::class -> {
+            val def = if (isDefNull) 0f else default as Float
+            getFloat(key, def) as T?
+        }
+        Long::class -> {
+            val def = if (isDefNull) 0 else default as Long
+            getLong(key, def) as T?
+        }
+        Boolean::class -> {
+            val def = if (isDefNull) false else default as Boolean
+            getBoolean(key, def) as T?
+        }
+        String::class -> {
+            val def = if (isDefNull) "" else default as String?
+            getString(key, def) as T?
+        }
+        else -> {
+            runCatching {
+                val json = getString(key, null)
+                json?.deserialize(type) ?: default
+            }.getOrElse { default }
+        }
     }
 }
 
@@ -161,15 +180,26 @@ fun <T> KvPrefModel.asLiveData(property: KProperty0<T>): LiveData<T> {
 }
 
 /**
- *  给原理的key再添加多一个标识
+ * 适合 key 是动态的情况
  */
-fun String.applyKey(key: String?): String {
-    if (key.isNullOrEmpty()) return this
-    return this + "_" + key
+inline fun <reified T : Any> KvPrefModel.saveWithKey(
+    property: KProperty0<*>,
+    applyKey: String,
+    value: T,
+    synchronous: Boolean = KvPrefModel.isCommitProperties
+) {
+    KvPrefPropertyWithKey.setValue(this, T::class, property, applyKey, value, synchronous)
 }
 
-fun String?.applyKeyNullable(key: String?): String? {
-    if (key.isNullOrEmpty()) return this
-    return this + "_" + key
-}
-
+inline fun <reified T : Any> KvPrefModel.getWithKey(
+    property: KProperty0<*>,
+    applyKey: String,
+    default: T? = null
+) = KvPrefPropertyWithKey.getValue(
+    this,
+    T::class,
+    object : TypeToken<T>() {}.type,
+    property,
+    applyKey,
+    default
+)
