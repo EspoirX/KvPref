@@ -12,7 +12,7 @@ allprojects {
 }
 
 dependencies {
-     implementation 'com.github.EspoirX:KvPref:v1.1'
+     implementation 'com.github.EspoirX:KvPref:v1.2'
 }
 ```
 [![](https://jitpack.io/v/EspoirX/KvPref.svg)](https://jitpack.io/#EspoirX/KvPref)
@@ -163,7 +163,45 @@ SpFileDemo.applyBulk {
 ```
 applyBulk 是调用 apply() 的，当然你也可以用 commitBulk
 
-### 8. 数据迁移
+### 8. 动态key存储功能
+在实际项目中，经常也会遇到这样的一种情况，需求存储的 key 是动态的，什么意思？
+举个例子，有一个颜色配置需要跟随用户，不同的用户不一样，所以在存储的时候很可能会这样做：color_config_312312
+其中 color_config_ 是一个 key 固定的部分，而后面那一串数字是不同用户的 userId。这样每个 userId 都会对应一个 key，所以 color_config 不是固定的，而是动态的。
+
+现在看看使用 KvPref 是如何完成这种需求的。首先我们需要定义一个变量作为 key 的固定部分：
+```kotlin
+object SpFileDemo : KvPrefModel("spFileName") {
+    var colorConfig: String? = null
+}
+```
+因为属性委托不能改变属性的属性名，所以改需求不能使用属性委托，所以定义完变量后不需要使用 by 什么的。而是随意定义，变量类型和赋值都可以随便，因为这里用到的只是
+变量名 colorConfig 而已。
+
+接下来，我们使用 KvPrefModel 的两个扩展方法 saveWithKey 和 getWithKey 去完成存取操作：
+```kotlin
+ SpFileDemo.saveWithKey(SpFileDemo::colorConfig, "312312", "#FFFFFF")
+ val color = SpFileDemo.getWithKey<String>(SpFileDemo::colorConfig, "312312")
+```
+如上，使用 saveWithKey 时，需要传入 3 个参数，第一个是固定部分的 key，通过 :: 去获取，第二个参数是动态部分的 key，相当于上面所说的 userId，
+第三个就是具体的值。 而存储的时候不需要指定具体的存储类型，如果第三个参数存的是 String，会自动识别为 String 类型，如果存的是一寸数字，会识别为 Int。
+上面 saveWithKey 在 sp 文件会已下面的结果出现：
+```xml
+ <int name="colorConfig_312312" value="#FFFFFF" />
+```
+
+在使用 getWithKey 时，同样的只需要传入固定+动态的 key 即可。不过在获取时需要传入获取的数据类型，不然会发生类型转换错误。
+
+在其他功能方面，跟其他情况一样，比如同样可以在批量操作中调用 saveWithKey：
+```kotlin
+ SpFileDemo.applyBulk {
+    saveWithKey(SpFileDemo::haha, "13", "打卡时打开")
+    saveWithKey(SpFileDemo::haha1, "24", "dasjd")
+    saveWithKey(SpFileDemo::haha2, "13", "萨达安卡")
+    name = "达拉斯多久啊离开"
+}
+```
+
+### 9. 数据迁移
 KvPref 提供了数据迁移方法，支持其他实现 SharedPreferences 接口的 key-value 实现把数据迁移到 KvPref。
 举例：
 ```kotlin
@@ -189,7 +227,7 @@ class KvMigrateProvider : ContentProvider() {
 
 为了尽早执行迁移逻辑，这里使用了 ContentProvider，然后顺便把初始化也放里面，通过 migrate 方法完成数据迁移。
 
-### 9. LiveData 形式监听 SharedPreferences.OnSharedPreferenceChangeListener
+### 10. LiveData 形式监听 SharedPreferences.OnSharedPreferenceChangeListener
 如果你想监听某个字段的 OnSharedPreferenceChangeListener，可以这样做：
 ```kotlin
 SpFileDemo.asLiveData(SpFileDemo::name).observe(this, Observer {
@@ -197,7 +235,7 @@ SpFileDemo.asLiveData(SpFileDemo::name).observe(this, Observer {
 })
 ```
 
-### 10. 其他 API
+### 11. 其他 API
 ```kotlin
 fun remove(property: KProperty<*>, synchronous: Boolean = isCommitProperties)
 fun getPrefKey(property: KProperty<*>): String?
