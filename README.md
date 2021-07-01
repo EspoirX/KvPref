@@ -176,7 +176,7 @@ object SpFileDemo : KvPrefModel("spFileName") {
     var colorConfig: String? = null
 }
 ```
-因为属性委托不能改变属性的属性名，所以改需求不能使用属性委托，所以定义完变量后不需要使用 by 什么的。而是随意定义，变量类型和赋值都可以随便，因为这里用到的只是
+因为属性委托不能改变属性的属性名，所以该需求不能使用属性委托，所以定义完变量后不需要使用 by 什么的。而是随意定义，变量类型和赋值都可以随便，因为这里用到的只是
 变量名 colorConfig 而已。
 
 接下来，我们使用 KvPrefModel 的两个扩展方法 saveWithKey 和 getWithKey 去完成存取操作：
