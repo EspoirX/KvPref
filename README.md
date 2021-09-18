@@ -133,6 +133,12 @@ object SpFileDemoJava {
 ```
 因为属性委托不能直接用在 Java 代码上，所以只能麻烦一点再包装一层，也还好把...
 
+但也可以直接这样子用，更方便：
+```javaa
+SpFileDemo.INSTANCE.setName("哈哈啊")
+String name = SpFileDemo.INSTANCE.getName()
+```
+
 
 ### 7. 批量操作
 如果要同时操作 N 个 key-value，就需要批量操作，因为一个个来显得不好。批量操作相关的 API 有 4 个：
