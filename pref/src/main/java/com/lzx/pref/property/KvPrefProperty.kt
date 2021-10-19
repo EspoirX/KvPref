@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.os.SystemClock
 import com.lzx.pref.*
 import java.lang.reflect.Type
-import java.util.*
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
@@ -27,7 +26,7 @@ open class KvPrefProperty<T : Any>(
 
     override fun preferenceKey(): String {
         val result = key ?: property.name
-        return if (keyUpperCase) result.toUpperCase(Locale.getDefault()) else result
+        return result.upperKey(keyUpperCase)
     }
 
     operator fun provideDelegate(

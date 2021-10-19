@@ -2,14 +2,8 @@ package com.lzx.pref.property
 
 import android.annotation.SuppressLint
 import android.os.SystemClock
-import com.lzx.pref.KvPrefModel
-import com.lzx.pref.PreferenceProperty
-import com.lzx.pref.getPreference
-import com.lzx.pref.execute
-import com.lzx.pref.setEditor
-import com.lzx.pref.setPreference
+import com.lzx.pref.*
 import java.lang.reflect.Type
-import java.util.Locale
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
@@ -32,7 +26,7 @@ open class KvPrefNullableProperty<T : Any>(
 
     override fun preferenceKey(): String {
         val result = key ?: property.name
-        return if (keyUpperCase) result.toUpperCase(Locale.getDefault()) else result
+        return result.upperKey(keyUpperCase)
     }
 
     operator fun provideDelegate(

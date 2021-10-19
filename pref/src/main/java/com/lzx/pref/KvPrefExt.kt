@@ -4,6 +4,7 @@ import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
 import com.lzx.pref.property.KvPrefPropertyWithKey
 import java.lang.reflect.Type
+import java.util.*
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty0
 
@@ -179,6 +180,10 @@ fun <T> KvPrefModel.asLiveData(property: KProperty0<T>): LiveData<T> {
     }
 }
 
+fun String.upperKey(keyUpperCase: Boolean): String {
+    return if (keyUpperCase) this.toUpperCase(Locale.getDefault()) else this
+}
+
 /**
  * 适合 key 是动态的情况
  */
@@ -186,20 +191,31 @@ inline fun <reified T : Any> KvPrefModel.saveWithKey(
     property: KProperty0<*>,
     applyKey: String,
     value: T,
+    keyUpperCase: Boolean = KvPrefModel.isKeyUpperCase,
     synchronous: Boolean = KvPrefModel.isCommitProperties
 ) {
-    KvPrefPropertyWithKey.setValue(this, T::class, property, applyKey, value, synchronous)
+    KvPrefPropertyWithKey.setValue(
+        this,
+        T::class,
+        property,
+        applyKey,
+        value,
+        keyUpperCase,
+        synchronous
+    )
 }
 
 inline fun <reified T : Any> KvPrefModel.getWithKey(
     property: KProperty0<*>,
     applyKey: String,
-    default: T? = null
+    default: T? = null,
+    keyUpperCase: Boolean = KvPrefModel.isKeyUpperCase,
 ) = KvPrefPropertyWithKey.getValue(
     this,
     T::class,
     object : TypeToken<T>() {}.type,
     property,
     applyKey,
-    default
+    default,
+    keyUpperCase
 )

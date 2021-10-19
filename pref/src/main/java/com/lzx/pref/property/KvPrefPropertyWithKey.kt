@@ -18,9 +18,10 @@ object KvPrefPropertyWithKey {
         type: Type,
         property: KProperty<*>,
         key: String,
-        default: T? = null
+        default: T? = null,
+        keyUpperCase: Boolean
     ): T? {
-        val realKey = property.name + "_" + key
+        val realKey = property.name.upperKey(keyUpperCase) + "_" + key
         handlerPropertiesList(thisRef, realKey, property)
         if (!thisRef.isInTransaction) {
             return thisRef.preference.getPreference(clazz, type, realKey, default)
@@ -41,9 +42,10 @@ object KvPrefPropertyWithKey {
         property: KProperty<*>,
         key: String,
         value: Any,
+        keyUpperCase: Boolean,
         synchronous: Boolean
     ) {
-        val realKey = property.name + "_" + key
+        val realKey = property.name.upperKey(keyUpperCase) + "_" + key
         handlerPropertiesList(thisRef, realKey, property)
         if (thisRef.isInTransaction) {
             transactionData = value

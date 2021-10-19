@@ -3,7 +3,6 @@ package com.lzx.pref.property
 import android.annotation.SuppressLint
 import android.os.SystemClock
 import com.lzx.pref.*
-import java.util.*
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
@@ -58,12 +57,11 @@ class KvDynamicPrefProperty<T : Any>(
         property: KProperty<*>
     ): ReadWriteProperty<KvPrefModel, T> {
         this.property = property
-        thisRef.kvProperties[property.name] = this
         return this
     }
 
     override fun preferenceKey(): String {
         val result = key ?: property.name
-        return if (keyUpperCase) result.toUpperCase(Locale.getDefault()) else result
+        return result.upperKey(keyUpperCase)
     }
 }
