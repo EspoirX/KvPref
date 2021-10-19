@@ -1,10 +1,10 @@
 package com.lzx.kvpref
 
-import com.lzx.pref.KvPrefModel
+import com.lzx.pref.*
 import com.lzx.pref.property.DynamicKeyPref
 
 object SpFileConfig : KvPrefModel("spFileName") {
-    var people: People? by objPrefNullable(People().apply { age = 100;name = "吃狗屎" })
+    var people: People? by objPrefNullable(People().apply { age = 100; name = "吃狗屎" })
     var otherpeople: People by objPref()
     var name: String by stringPref()
     var otherName: String? by stringPrefNullable()
@@ -16,9 +16,8 @@ object SpFileConfig : KvPrefModel("spFileName") {
     var haha1: String? = null
     var haha2: String? = null
 
-    var tagJson: DynamicKeyPref<String> by dynamicKeyPref()
+    var tagJson: DynamicKeyPref<String?>? by dynamicKeyPrefNullable()
         private set
-
 }
 
 class People {

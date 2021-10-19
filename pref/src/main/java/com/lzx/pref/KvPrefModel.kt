@@ -5,9 +5,7 @@ import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.SystemClock
-import com.lzx.pref.property.KvDynamicPrefProperty
-import com.lzx.pref.property.KvPrefNullableProperty
-import com.lzx.pref.property.KvPrefProperty
+import com.lzx.pref.property.PreferenceProperty
 import java.lang.reflect.Type
 import kotlin.reflect.KProperty
 
@@ -44,119 +42,6 @@ open class KvPrefModel constructor(
 
     //保存所有 key和value
     internal val kvProperties = mutableMapOf<String, PreferenceProperty>()
-
-    fun stringPref(
-        default: String = "",
-        key: String? = null,
-        keyUpperCase: Boolean = isKeyUpperCase,
-        synchronous: Boolean = isCommitProperties
-    ) = StringPref(default, synchronous, key, keyUpperCase)
-
-    fun stringPrefNullable(
-        default: String = "",
-        key: String? = null,
-        keyUpperCase: Boolean = isKeyUpperCase,
-        synchronous: Boolean = isCommitProperties
-    ) = StringNullablePref(default, synchronous, key, keyUpperCase)
-
-    fun intPref(
-        default: Int = 0,
-        key: String? = null,
-        keyUpperCase: Boolean = isKeyUpperCase,
-        synchronous: Boolean = isCommitProperties
-    ) = IntPref(default, synchronous, key, keyUpperCase)
-
-    fun intPrefNullable(
-        default: Int = 0,
-        key: String? = null,
-        keyUpperCase: Boolean = isKeyUpperCase,
-        synchronous: Boolean = isCommitProperties
-    ) = IntNullablePref(default, synchronous, key, keyUpperCase)
-
-    fun longPref(
-        default: Long = 0,
-        key: String? = null,
-        keyUpperCase: Boolean = isKeyUpperCase,
-        synchronous: Boolean = isCommitProperties
-    ) = LongPref(default, synchronous, key, keyUpperCase)
-
-    fun longPrefNullable(
-        default: Long = 0,
-        key: String? = null,
-        keyUpperCase: Boolean = isKeyUpperCase,
-        synchronous: Boolean = isCommitProperties
-    ) = LongNullablePref(default, synchronous, key, keyUpperCase)
-
-    fun floatPref(
-        default: Float = 0f,
-        key: String? = null,
-        keyUpperCase: Boolean = isKeyUpperCase,
-        synchronous: Boolean = isCommitProperties
-    ) = FloatPref(default, synchronous, key, keyUpperCase)
-
-    fun floatPrefNullable(
-        default: Float = 0f,
-        key: String? = null,
-        keyUpperCase: Boolean = isKeyUpperCase,
-        synchronous: Boolean = isCommitProperties
-    ) = FloatNullablePref(default, synchronous, key, keyUpperCase)
-
-    fun booleanPref(
-        default: Boolean = false,
-        key: String? = null,
-        keyUpperCase: Boolean = isKeyUpperCase,
-        synchronous: Boolean = isCommitProperties
-    ) = BooleanPref(default, synchronous, key, keyUpperCase)
-
-    fun booleanPrefNullable(
-        default: Boolean = false,
-        key: String? = null,
-        keyUpperCase: Boolean = isKeyUpperCase,
-        synchronous: Boolean = isCommitProperties
-    ) = BooleanNullablePref(default, synchronous, key, keyUpperCase)
-
-    inline fun <reified T : Any> objPref(
-        default: T? = null,
-        key: String? = null,
-        keyUpperCase: Boolean = isKeyUpperCase,
-        synchronous: Boolean = isCommitProperties
-    ) = KvPrefProperty(
-        T::class,
-        object : TypeToken<T>() {}.type,
-        synchronous,
-        key,
-        keyUpperCase,
-        default
-    )
-
-    inline fun <reified T : Any> objPrefNullable(
-        default: T,
-        key: String? = null,
-        keyUpperCase: Boolean = isKeyUpperCase,
-        synchronous: Boolean = isCommitProperties
-    ) = KvPrefNullableProperty(
-        T::class,
-        object : TypeToken<T>() {}.type,
-        synchronous,
-        key,
-        keyUpperCase,
-        default
-    )
-
-    inline fun <reified T : Any> dynamicKeyPref(
-        default: T? = null,
-        key: String? = null,
-        keyUpperCase: Boolean = isKeyUpperCase,
-        synchronous: Boolean = isCommitProperties
-    ) = KvDynamicPrefProperty(
-        this,
-        T::class,
-        synchronous,
-        key,
-        keyUpperCase,
-        default
-    )
-
 
     /**
      * 开始批量存储

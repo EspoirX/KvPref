@@ -2,11 +2,112 @@ package com.lzx.pref
 
 import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
-import com.lzx.pref.property.KvPrefPropertyWithKey
+import com.lzx.pref.property.KvDynamicNullableProperty
+import com.lzx.pref.property.KvDynamicPrefProperty
+import com.lzx.pref.property.KvPrefNullableProperty
+import com.lzx.pref.property.KvPrefProperty
 import java.lang.reflect.Type
-import java.util.*
+import java.util.Locale
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty0
+
+fun KvPrefModel.stringPref(
+    default: String = "",
+    key: String? = null,
+    keyUpperCase: Boolean = KvPrefModel.isKeyUpperCase,
+    synchronous: Boolean = KvPrefModel.isCommitProperties
+) = KvPrefProperty(String::class, String::class.java, synchronous, key, keyUpperCase, default)
+
+fun KvPrefModel.stringPrefNullable(
+    default: String = "",
+    key: String? = null,
+    keyUpperCase: Boolean = KvPrefModel.isKeyUpperCase,
+    synchronous: Boolean = KvPrefModel.isCommitProperties
+) = KvPrefNullableProperty(String::class, String::class.java, synchronous, key, keyUpperCase, default)
+
+fun KvPrefModel.intPref(
+    default: Int = 0,
+    key: String? = null,
+    keyUpperCase: Boolean = KvPrefModel.isKeyUpperCase,
+    synchronous: Boolean = KvPrefModel.isCommitProperties
+) = KvPrefProperty(Int::class, Int::class.java, synchronous, key, keyUpperCase, default)
+
+fun KvPrefModel.intPrefNullable(
+    default: Int = 0,
+    key: String? = null,
+    keyUpperCase: Boolean = KvPrefModel.isKeyUpperCase,
+    synchronous: Boolean = KvPrefModel.isCommitProperties
+) = KvPrefNullableProperty(Int::class, Int::class.java, synchronous, key, keyUpperCase, default)
+
+fun KvPrefModel.longPref(
+    default: Long = 0,
+    key: String? = null,
+    keyUpperCase: Boolean = KvPrefModel.isKeyUpperCase,
+    synchronous: Boolean = KvPrefModel.isCommitProperties
+) = KvPrefProperty(Long::class, Long::class.java, synchronous, key, keyUpperCase, default)
+
+fun KvPrefModel.longPrefNullable(
+    default: Long = 0,
+    key: String? = null,
+    keyUpperCase: Boolean = KvPrefModel.isKeyUpperCase,
+    synchronous: Boolean = KvPrefModel.isCommitProperties
+) = KvPrefNullableProperty(Long::class, Long::class.java, synchronous, key, keyUpperCase, default)
+
+fun KvPrefModel.floatPref(
+    default: Float = 0f,
+    key: String? = null,
+    keyUpperCase: Boolean = KvPrefModel.isKeyUpperCase,
+    synchronous: Boolean = KvPrefModel.isCommitProperties
+) = KvPrefProperty(Float::class, Float::class.java, synchronous, key, keyUpperCase, default)
+
+fun KvPrefModel.floatPrefNullable(
+    default: Float = 0f,
+    key: String? = null,
+    keyUpperCase: Boolean = KvPrefModel.isKeyUpperCase,
+    synchronous: Boolean = KvPrefModel.isCommitProperties
+) = KvPrefNullableProperty(Float::class, Float::class.java, synchronous, key, keyUpperCase, default)
+
+fun KvPrefModel.booleanPref(
+    default: Boolean = false,
+    key: String? = null,
+    keyUpperCase: Boolean = KvPrefModel.isKeyUpperCase,
+    synchronous: Boolean = KvPrefModel.isCommitProperties
+) = KvPrefProperty(Boolean::class, Boolean::class.java, synchronous, key, keyUpperCase, default)
+
+fun KvPrefModel.booleanPrefNullable(
+    default: Boolean = false,
+    key: String? = null,
+    keyUpperCase: Boolean = KvPrefModel.isKeyUpperCase,
+    synchronous: Boolean = KvPrefModel.isCommitProperties
+) = KvPrefNullableProperty(Boolean::class, Boolean::class.java, synchronous, key, keyUpperCase, default)
+
+inline fun <reified T : Any> KvPrefModel.objPref(
+    default: T? = null,
+    key: String? = null,
+    keyUpperCase: Boolean = KvPrefModel.isKeyUpperCase,
+    synchronous: Boolean = KvPrefModel.isCommitProperties
+) = KvPrefProperty(T::class, object : TypeToken<T>() {}.type, synchronous, key, keyUpperCase, default)
+
+inline fun <reified T : Any> KvPrefModel.objPrefNullable(
+    default: T,
+    key: String? = null,
+    keyUpperCase: Boolean = KvPrefModel.isKeyUpperCase,
+    synchronous: Boolean = KvPrefModel.isCommitProperties
+) = KvPrefNullableProperty(T::class, object : TypeToken<T>() {}.type, synchronous, key, keyUpperCase, default)
+
+inline fun <reified T : Any> KvPrefModel.dynamicKeyPref(
+    default: T? = null,
+    key: String? = null,
+    keyUpperCase: Boolean = KvPrefModel.isKeyUpperCase,
+    synchronous: Boolean = KvPrefModel.isCommitProperties
+) = KvDynamicPrefProperty(this, T::class, synchronous, key, keyUpperCase, default)
+
+inline fun <reified T : Any> KvPrefModel.dynamicKeyPrefNullable(
+    default: T? = null,
+    key: String? = null,
+    keyUpperCase: Boolean = KvPrefModel.isKeyUpperCase,
+    synchronous: Boolean = KvPrefModel.isCommitProperties
+) = KvDynamicNullableProperty(this, T::class, synchronous, key, keyUpperCase, default)
 
 /**
  * 批量写入
@@ -180,42 +281,10 @@ fun <T> KvPrefModel.asLiveData(property: KProperty0<T>): LiveData<T> {
     }
 }
 
+/**
+ * 转大写
+ */
 fun String.upperKey(keyUpperCase: Boolean): String {
     return if (keyUpperCase) this.toUpperCase(Locale.getDefault()) else this
 }
 
-/**
- * 适合 key 是动态的情况
- */
-inline fun <reified T : Any> KvPrefModel.saveWithKey(
-    property: KProperty0<*>,
-    applyKey: String,
-    value: T,
-    keyUpperCase: Boolean = KvPrefModel.isKeyUpperCase,
-    synchronous: Boolean = KvPrefModel.isCommitProperties
-) {
-    KvPrefPropertyWithKey.setValue(
-        this,
-        T::class,
-        property,
-        applyKey,
-        value,
-        keyUpperCase,
-        synchronous
-    )
-}
-
-inline fun <reified T : Any> KvPrefModel.getWithKey(
-    property: KProperty0<*>,
-    applyKey: String,
-    default: T? = null,
-    keyUpperCase: Boolean = KvPrefModel.isKeyUpperCase,
-) = KvPrefPropertyWithKey.getValue(
-    this,
-    T::class,
-    object : TypeToken<T>() {}.type,
-    property,
-    applyKey,
-    default,
-    keyUpperCase
-)
