@@ -72,18 +72,18 @@ class MmKvPref : KvPrefProvider {
 ### 3. 创建存放 key-value 配置的类
 创建一个类，object 类型，使其继承 KvPrefModel，则完成创建。
 ```kotlin
-object SpFileDemo : KvPrefModel("spFileName") { ... }
+object SpFileConfig : KvPrefModel("spFileName") { ... }
 ```
 KvPrefModel 有两个参数，第一个参数是 key-value 文件的文件名，第二个参数是 KvPrefProvider，即具体实现。文件名是必需要有的，
 而第二个参数可以不传，不传的话默认实现就是 SharedPreferences，如果你用的是 mmkv 你可以这样：
 ```kotlin
-object SpFileDemo : KvPrefModel("spFileName", MmKvPref()) { ... }
+object SpFileConfig : KvPrefModel("spFileName", MmKvPref()) { ... }
 ```
 
 
 ### 4. 具体使用
 ```kotlin
-object SpFileDemo : KvPrefModel("spFileName") {
+object SpFileConfig : KvPrefModel("spFileName") {
     var people: People? by objPrefNullable(People().apply { age = 100;name = "吃狗屎" })
     var otherpeople: People by objPref()
     var name: String by stringPref()
@@ -94,10 +94,10 @@ object SpFileDemo : KvPrefModel("spFileName") {
     var isGay: Boolean? by booleanPrefNullable(false, key = "是否是变态")
 }
 
-SpFileDemo.name = "大妈蛋"
-Log.i("MainActivity", "read = " + SpFileDemo.name)
+SpFileConfig.name = "大妈蛋"
+Log.i("MainActivity", "read = " + SpFileConfig.name)
 ```
-如上，在 SpFileDemo 里面定义了一些值，在使用的时候，给值赋值就是在写 key-value，直接获取值，就是在读 key-value。
+如上，在 SpFileConfig 里面定义了一些值，在使用的时候，给值赋值就是在写 key-value，直接获取值，就是在读 key-value。
 
 每个值的类型对应这一个相应的 xxxPref() 方法，值的类型对应的就是读写 key-value 的具体类型，比如 stringPref
 就是对应 putString 和 getString。
@@ -122,22 +122,12 @@ keyUpperCase 代表是否把 key 变成大写，默认 false。
 synchronous 代表是使用 apply() 还是 commit()，false 代表是使用 apply()，默认 false。
 
 ### 6. 兼容 Java 的用法
-```kotlin
-object SpFileDemoJava {
-    fun setPeople(people: People) {
-        SpFileDemo.people = people
-    }
 
-    fun getPeople() = SpFileDemo.people
-}
+```java
+SpFileConfig.INSTANCE.setName("哈哈啊")
+String name = SpFileConfig.INSTANCE.getName()
 ```
-因为属性委托不能直接用在 Java 代码上，所以只能麻烦一点再包装一层，也还好把...
-
-但也可以直接这样子用，更方便：
-```javaa
-SpFileDemo.INSTANCE.setName("哈哈啊")
-String name = SpFileDemo.INSTANCE.getName()
-```
+java 可以直接这样使用。
 
 
 ### 7. 批量操作
@@ -151,17 +141,17 @@ fun cancelBulkEdit()  //释放资源
 
 用法举例：
 ```kotlin
-SpFileDemo.beginBulkEdit()
-SpFileDemo.name = "小明"
-SpFileDemo.age = 18
-SpFileDemo.isGay = true
-SpFileDemo.applyBulkEdit()
-SpFileDemo.cancelBulkEdit()
+SpFileConfig.beginBulkEdit()
+SpFileConfig.name = "小明"
+SpFileConfig.age = 18
+SpFileConfig.isGay = true
+SpFileConfig.applyBulkEdit()
+SpFileConfig.cancelBulkEdit()
 ```
 
 可以看到代码比较模版，所以这里也提供了扩展函数去直接使用：
 ```kotlin
-SpFileDemo.applyBulk {
+SpFileConfig.applyBulk {
     name = "小明"
     age = 18
     isGay = true
@@ -178,33 +168,36 @@ applyBulk 是调用 apply() 的，当然你也可以用 commitBulk
 
 现在看看使用 KvPref 是如何完成这种需求的。首先我们需要定义一个变量作为 key 的固定部分：
 ```kotlin
-object SpFileDemo : KvPrefModel("spFileName") {
-    var colorConfig: String? = null
+object SpFileConfig : KvPrefModel("spFileName") {
+     var color_config: DynamicKeyPref<String> by dynamicKeyPref()
+         private set
+         
+     var color_config: DynamicKeyPref<String?> by dynamicKeyPrefNullable()
+         private set
 }
 ```
-因为属性委托不能改变属性的属性名，所以该需求不能使用属性委托，所以定义完变量后不需要使用 by 什么的。而是随意定义，变量类型和赋值都可以随便，因为这里用到的只是
-变量名 colorConfig 而已。
+动态key存储功能需要使用属性 DynamicKeyPref，DynamicKeyPref 是一个接口，内部有 get 和 set 方法，用来完成存取功能，DynamicKeyPref 会接受一个泛型
+类型，传入的类型是什么，就代表存储对应的类型是什么。
 
-接下来，我们使用 KvPrefModel 的两个扩展方法 saveWithKey 和 getWithKey 去完成存取操作：
+
+接下来，我们看看例子：
 ```kotlin
- SpFileDemo.saveWithKey(SpFileDemo::colorConfig, "312312", "#FFFFFF")
- val color = SpFileDemo.getWithKey<String>(SpFileDemo::colorConfig, "312312")
+ SpFileConfig.color_config.set("312312", "#FFFFFF")
+ val color = SpFileConfig.color_config.get("312312")
 ```
-如上，使用 saveWithKey 时，需要传入 3 个参数，第一个是固定部分的 key，通过 :: 去获取，第二个参数是动态部分的 key，相当于上面所说的 userId，
-第三个就是具体的值。 而存储的时候不需要指定具体的存储类型，如果第三个参数存的是 String，会自动识别为 String 类型，如果存的是一寸数字，会识别为 Int。
-上面 saveWithKey 在 sp 文件会已下面的结果出现：
+如上，set 方法有两个参数，第一个是 key 的动态部分，即上面说到的 userId，第二个参数是具体的值，get 方法有一个参数，即对应的 key。  
+以上例子在 sp 文件会已下面的结果出现：
 ```xml
  <int name="colorConfig_312312" value="#FFFFFF" />
 ```
 
-在使用 getWithKey 时，同样的只需要传入固定+动态的 key 即可。不过在获取时需要传入获取的数据类型，不然会发生类型转换错误。
 
-在其他功能方面，跟其他情况一样，比如同样可以在批量操作中调用 saveWithKey：
+在其他功能方面，跟其他情况一样，比如同样可以在批量操作中使用动态key功能：
 ```kotlin
- SpFileDemo.applyBulk {
-    saveWithKey(SpFileDemo::haha, "13", "打卡时打开")
-    saveWithKey(SpFileDemo::haha1, "24", "dasjd")
-    saveWithKey(SpFileDemo::haha2, "13", "萨达安卡")
+ SpFileConfig.applyBulk {
+    SpFileConfig.haha.set("13", "打卡时打开")
+    SpFileConfig.haha1.set("24", "dasjd")
+    SpFileConfig.haha2.set("13", "萨达安卡")
     name = "达拉斯多久啊离开"
 }
 ```
@@ -226,7 +219,7 @@ class KvMigrateProvider : ContentProvider() {
                     return gson.fromJson(json, type);
                 }
             })
-            SpFileDemo.migrate(PreferenceManager.getDefaultSharedPreferences(context))
+            SpFileConfig.migrate(PreferenceManager.getDefaultSharedPreferences(context))
         }
         return true
     }
@@ -238,7 +231,7 @@ class KvMigrateProvider : ContentProvider() {
 ### 10. LiveData 形式监听 SharedPreferences.OnSharedPreferenceChangeListener
 如果你想监听某个字段的 OnSharedPreferenceChangeListener，可以这样做：
 ```kotlin
-SpFileDemo.asLiveData(SpFileDemo::name).observe(this, Observer {
+SpFileConfig.asLiveData(SpFileConfig::name).observe(this, Observer {
     //...
 })
 ```
@@ -255,10 +248,10 @@ remove 就是删除的意思，getPrefKey 是获取 key-value 的 key 值，getP
 
 使用方式：
 ```kotlin
-SpFileDemo.remove(SpFileDemo::name)
-val prefKey = SpFileDemo.getPrefKey(SpFileDemo::name)
-val prefName = SpFileDemo.getPrefName(SpFileDemo::name)
-val map = SpFileDemo.getAll()
+SpFileConfig.remove(SpFileConfig::name)
+val prefKey = SpFileConfig.getPrefKey(SpFileConfig::name)
+val prefName = SpFileConfig.getPrefName(SpFileConfig::name)
+val map = SpFileConfig.getAll()
 ```
 注意参数都是以双冒号的形式传进去的
 
