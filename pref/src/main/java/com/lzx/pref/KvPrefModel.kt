@@ -5,6 +5,7 @@ import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
 import android.os.SystemClock
+import com.lzx.pref.property.KvDynamicPrefProperty
 import com.lzx.pref.property.KvPrefNullableProperty
 import com.lzx.pref.property.KvPrefProperty
 import java.lang.reflect.Type
@@ -141,6 +142,21 @@ open class KvPrefModel constructor(
         keyUpperCase,
         default
     )
+
+    inline fun <reified T : Any> dynamicKeyPref(
+        default: T? = null,
+        key: String? = null,
+        keyUpperCase: Boolean = isKeyUpperCase,
+        synchronous: Boolean = isCommitProperties
+    ) = KvDynamicPrefProperty(
+        this,
+        T::class,
+        synchronous,
+        key,
+        keyUpperCase,
+        default
+    )
+
 
     /**
      * 开始批量存储

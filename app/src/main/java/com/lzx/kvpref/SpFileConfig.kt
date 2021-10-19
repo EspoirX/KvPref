@@ -1,10 +1,9 @@
 package com.lzx.kvpref
 
 import com.lzx.pref.KvPrefModel
-import com.lzx.pref.getWithKey
-import com.lzx.pref.saveWithKey
+import com.lzx.pref.property.DynamicKeyPref
 
-object SpFileDemo : KvPrefModel("spFileName") {
+object SpFileConfig : KvPrefModel("spFileName") {
     var people: People? by objPrefNullable(People().apply { age = 100;name = "吃狗屎" })
     var otherpeople: People by objPref()
     var name: String by stringPref()
@@ -16,33 +15,10 @@ object SpFileDemo : KvPrefModel("spFileName") {
     var haha: String? = null
     var haha1: String? = null
     var haha2: String? = null
-}
 
-/**
- * 兼容java的写法
- */
-object SpFileDemoJava {
-    @JvmStatic
-    var people: People?
-        get() = SpFileDemo.people
-        set(value) {
-            SpFileDemo.people = value
-        }
+    var tagJson: DynamicKeyPref<String> by dynamicKeyPref()
+        private set
 
-    @JvmStatic
-    var name: String
-        get() = SpFileDemo.name
-        set(value) {
-            SpFileDemo.name = value
-        }
-
-    @JvmStatic
-    fun setHaha(key: String, value: String) {
-        SpFileDemo.saveWithKey(SpFileDemo::haha2, key, value)
-    }
-
-    @JvmStatic
-    fun getHaha(key: String) = SpFileDemo.getWithKey<Int>(SpFileDemo::haha, key)
 }
 
 class People {

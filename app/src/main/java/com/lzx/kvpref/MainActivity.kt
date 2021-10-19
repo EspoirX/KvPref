@@ -1,32 +1,29 @@
 package com.lzx.kvpref
 
 import android.os.Bundle
-import android.util.Log
-import android.widget.Button
+import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.lzx.pref.applyBulk
-import com.lzx.pref.getWithKey
-import com.lzx.pref.saveWithKey
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        findViewById<Button>(R.id.write).setOnClickListener {
 
 
-            SpFileDemo.saveWithKey(SpFileDemo::haha, "哈", 13123121)
-            val result = SpFileDemo.getWithKey<Int>(SpFileDemo::haha, "哈")
+        findViewById<View>(R.id.write).setOnClickListener {
+//            SpFileConfig.saveWithKey(SpFileConfig::haha, "哈", 13123121)
+            SpFileConfig.tagJson.set("1343", "我是动态key")
+            Toast.makeText(this@MainActivity, "写成功", Toast.LENGTH_SHORT).show()
+        }
 
-            SpFileDemo.applyBulk {
-                saveWithKey(SpFileDemo::haha, "13", "打卡时打开")
-                saveWithKey(SpFileDemo::haha1, "24", "dasjd")
-                saveWithKey(SpFileDemo::haha2, "13", "萨达安卡")
-                name = "达拉斯多久啊离开"
-            }
-
-            Log.i("MainActivity", "read = " + result)
+        findViewById<View>(R.id.red).setOnClickListener {
+            Toast.makeText(
+                this@MainActivity,
+                "read = " + SpFileConfig.tagJson.get("1343"),
+                Toast.LENGTH_SHORT
+            ).show()
         }
 
 

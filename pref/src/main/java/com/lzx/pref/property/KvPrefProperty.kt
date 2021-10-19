@@ -3,9 +3,6 @@ package com.lzx.pref.property
 import android.annotation.SuppressLint
 import android.os.SystemClock
 import com.lzx.pref.*
-import com.lzx.pref.getPreference
-import com.lzx.pref.setEditor
-import com.lzx.pref.setPreference
 import java.lang.reflect.Type
 import java.util.*
 import kotlin.properties.ReadWriteProperty
