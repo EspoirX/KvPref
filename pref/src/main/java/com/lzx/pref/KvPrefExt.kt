@@ -2,10 +2,7 @@ package com.lzx.pref
 
 import android.content.SharedPreferences
 import androidx.lifecycle.LiveData
-import com.lzx.pref.property.KvDynamicNullableProperty
-import com.lzx.pref.property.KvDynamicPrefProperty
-import com.lzx.pref.property.KvPrefNullableProperty
-import com.lzx.pref.property.KvPrefProperty
+import com.lzx.pref.property.*
 import java.lang.reflect.Type
 import java.util.Locale
 import kotlin.reflect.KClass
@@ -108,6 +105,7 @@ inline fun <reified T : Any> KvPrefModel.dynamicKeyPrefNullable(
     keyUpperCase: Boolean = KvPrefModel.isKeyUpperCase,
     synchronous: Boolean = KvPrefModel.isCommitProperties
 ) = KvDynamicNullableProperty(this, T::class, synchronous, key, keyUpperCase, default)
+
 
 /**
  * 批量写入

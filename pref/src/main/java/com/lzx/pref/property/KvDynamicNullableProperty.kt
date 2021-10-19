@@ -13,7 +13,7 @@ class KvDynamicNullableProperty<T : Any>(
     private val key: String?,
     private val keyUpperCase: Boolean,
     private val default: T?
-) : AbstractPrefProperty<T?>() {
+) : AbsDynamicPrefProperty<T?>() {
 
     override val renameKey: String?
         get() = key
@@ -23,17 +23,9 @@ class KvDynamicNullableProperty<T : Any>(
     override fun provideDelegate(
         thisRef: KvPrefModel,
         property: KProperty<*>
-    ): ReadWriteProperty<KvPrefModel, T?> {
+    ): ReadWriteProperty<KvPrefModel, DynamicKeyPref<T?>> {
         this.property = property
         return this
-    }
-
-    override fun getValue(thisRef: KvPrefModel, property: KProperty<*>): T {
-        return this as T
-    }
-
-    override fun setValue(thisRef: KvPrefModel, property: KProperty<*>, value: T?) {
-        //do nothing
     }
 
     override fun getRef(): KvPrefModel = thisRef

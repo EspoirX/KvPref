@@ -1,12 +1,7 @@
 package com.lzx.pref.property
 
 import android.annotation.SuppressLint
-import com.lzx.pref.KvPrefModel
-import com.lzx.pref.TypeToken
-import com.lzx.pref.getPreference
-import com.lzx.pref.setPreference
-import com.lzx.pref.setEditor
-import com.lzx.pref.execute
+import com.lzx.pref.*
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty
@@ -21,7 +16,7 @@ class KvDynamicPrefProperty<T : Any>(
     private val key: String?,
     private val keyUpperCase: Boolean,
     private val default: T?
-) : AbstractPrefProperty<T>() {
+) : AbsDynamicPrefProperty<T>() {
 
     override val renameKey: String?
         get() = key
@@ -31,17 +26,9 @@ class KvDynamicPrefProperty<T : Any>(
     override fun provideDelegate(
         thisRef: KvPrefModel,
         property: KProperty<*>
-    ): ReadWriteProperty<KvPrefModel, T> {
+    ): ReadWriteProperty<KvPrefModel, DynamicKeyPref<T>> {
         this.property = property
         return this
-    }
-
-    override fun getValue(thisRef: KvPrefModel, property: KProperty<*>): T {
-        return this as T
-    }
-
-    override fun setValue(thisRef: KvPrefModel, property: KProperty<*>, value: T) {
-        //do nothing
     }
 
     override fun getRef(): KvPrefModel = thisRef
