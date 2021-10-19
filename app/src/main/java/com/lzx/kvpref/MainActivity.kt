@@ -13,15 +13,16 @@ class MainActivity : AppCompatActivity() {
 
 
         findViewById<View>(R.id.write).setOnClickListener {
-//            SpFileConfig.saveWithKey(SpFileConfig::haha, "哈", 13123121)
             SpFileConfig.tagJson.set("1343", "我是动态key")
+            SpFileConfig.color.set("11111", 10000)
             Toast.makeText(this@MainActivity, "写成功", Toast.LENGTH_SHORT).show()
         }
 
         findViewById<View>(R.id.red).setOnClickListener {
-            val obj = SpFileConfig.tagJson
-            val result = obj.get("1343")
-            Toast.makeText(this@MainActivity, "obj = $obj result = $result", Toast.LENGTH_SHORT).show()
+            val result = SpFileConfig.tagJson.get("1343")
+            val color = SpFileConfig.color.get("11111")
+            Toast.makeText(this@MainActivity, "result = $color", Toast.LENGTH_SHORT)
+                .show()
         }
 
 

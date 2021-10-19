@@ -18,6 +18,9 @@ object SpFileConfig : KvPrefModel("spFileName") {
 
     var tagJson2: DynamicKeyPref<String?> by dynamicKeyPrefNullable()
         private set
+
+    var color : DynamicKeyPref<Int> by dynamicKeyPref(100)
+        private set
 }
 
 class People {
