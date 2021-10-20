@@ -15,6 +15,7 @@ class MainActivity : AppCompatActivity() {
         findViewById<View>(R.id.write).setOnClickListener {
             SpFileConfig.tagJson.set("1343", "我是动态key")
             SpFileConfig.color.set("11111", 10000)
+            SpFileConfig.name = "dsadasd"
             Toast.makeText(this@MainActivity, "写成功", Toast.LENGTH_SHORT).show()
         }
 

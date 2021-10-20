@@ -86,7 +86,7 @@ inline fun <reified T : Any> KvPrefModel.objPref(
 ) = KvPrefProperty(T::class, object : TypeToken<T>() {}.type, synchronous, key, keyUpperCase, default)
 
 inline fun <reified T : Any> KvPrefModel.objPrefNullable(
-    default: T,
+    default: T?,
     key: String? = null,
     keyUpperCase: Boolean = KvPrefModel.isKeyUpperCase,
     synchronous: Boolean = KvPrefModel.isCommitProperties

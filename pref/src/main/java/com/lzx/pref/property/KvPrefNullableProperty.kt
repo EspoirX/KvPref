@@ -18,7 +18,7 @@ open class KvPrefNullableProperty<T : Any>(
     private val synchronous: Boolean,
     private val key: String?,
     private val keyUpperCase: Boolean,
-    private val default: T
+    private val default: T?
 ) : AbstractPrefProperty<T?>() {
     override val renameKey: String?
         get() = key
