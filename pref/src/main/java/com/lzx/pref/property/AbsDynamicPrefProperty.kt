@@ -39,7 +39,7 @@ abstract class AbsDynamicPrefProperty<T : Any?> :
     }
 
     override fun get(key: String): T {
-        if (getRef().isInTransaction) {
+        if (!getRef().isInTransaction) {
             return getPreference(getRef(), key)
         }
         if (lastUpdate < getRef().transactionStartTime) {
