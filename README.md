@@ -12,7 +12,7 @@ allprojects {
 }
 
 dependencies {
-     implementation 'com.github.EspoirX:KvPref:v1.2'
+     implementation 'com.github.EspoirX:KvPref:XXX'
 }
 ```
 [![](https://jitpack.io/v/EspoirX/KvPref.svg)](https://jitpack.io/#EspoirX/KvPref)
